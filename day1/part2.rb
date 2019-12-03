@@ -6,8 +6,6 @@ def calculate_fuel(mass, acc = 0)
   acc + calculate_fuel(pre_fuel, pre_fuel)
 end
 
-result = modules.map do |mass|
-  calculate_fuel(mass.to_f)
-end.reduce(0, :+)
+result = modules.map { |mass| calculate_fuel(mass.to_f) }.reduce(0, :+)
 
 puts result
