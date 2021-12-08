@@ -1,0 +1,1 @@
+input = File.read(File.join(__dir__, 'input.txt'))
