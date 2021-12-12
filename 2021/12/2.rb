@@ -30,6 +30,10 @@ class Cave
     self.connections << cave2
     cave2.connections << self
   end
+
+  def small?
+    !big? && name != 'start' && name != 'end'
+  end
 end
 
 class Map
@@ -60,13 +64,17 @@ map = Map.new(input)
 start_point = map.named('start')
 
 def nodes_till_end?(start_point, nodes = [])
+  matched_double = false
   start_point.connections.select { |k| k.name != 'start'}.each do |node|
+    new_node_list = [*nodes, start_point]
     if node.name == 'end'
       @potential_connections.push([*nodes, start_point, node])
-    elsif !node.big? && nodes.count { |k| k.name == node.name } >= 2 
-      next
-    else
-      nodes_till_end?(node, [*nodes, start_point])
+    elsif node.big? || (
+      new_node_list.count { |k| k.name == node.name } < (
+        (new_node_list.select(&:small?).tally.values.count { |k| k >= 2} == 0) ? 2 : 1
+      )
+    )
+      nodes_till_end?(node, new_node_list)
     end
   end
 end
@@ -74,4 +82,4 @@ nodes_till_end?(start_point, [])
 
 result = @potential_connections.map { |k| k.map(&:name).join(',')}.uniq
 
-puts result.length, result
+puts result.length
